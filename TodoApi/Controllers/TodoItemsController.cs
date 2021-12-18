@@ -8,6 +8,7 @@ namespace TodoApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
+    [ApiVersion("1.0")]
     public class TodoItemsController : ControllerBase
     {
         private readonly TodoContext _context;
@@ -135,7 +136,7 @@ namespace TodoApi.Controllers
             _context.TodoItems.Add(todoItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTodoItem", new { id = todoItem.Id }, todoItem);
+            return CreatedAtAction("GetById", new { id = todoItem.Id }, todoItem);
         }
 
         // DELETE: api/TodoItems/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx,
