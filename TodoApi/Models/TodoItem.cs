@@ -6,6 +6,7 @@ namespace TodoApi.Models
     /// <summary>
     /// TodoItem Model
     /// </summary>
+    [Table("TodoItem")]
     public class TodoItem
     {
         [Key]
