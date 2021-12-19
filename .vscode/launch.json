@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/bin/Debug/net6.0/containerize-webapi-ef-mssq.dll",
+            "program": "${workspaceFolder}/TodoApi/bin/Debug/net6.0/TodoApi.dll", // Specify the project to debug
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
