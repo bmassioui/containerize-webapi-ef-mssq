@@ -4,6 +4,9 @@ using TodoApi.Models;
 
 namespace TodoApi.Profiles
 {
+    /// <summary>
+    /// Setup TodoItem Profile
+    /// </summary>
     public class TodoItemProfile : Profile
     {
         public TodoItemProfile()
