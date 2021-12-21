@@ -1,6 +1,8 @@
 #nullable disable
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TodoApi.Dtos;
 using TodoApi.Models;
 
 namespace TodoApi.Controllers
@@ -12,28 +14,32 @@ namespace TodoApi.Controllers
     public class TodoItemsController : ControllerBase
     {
         private readonly TodoContext _context;
+        private readonly IMapper _mapper;
 
-        public TodoItemsController(TodoContext context)
+        public TodoItemsController(TodoContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/TodoItems
         /// <summary>
-        /// Get all TodoItems
+        /// Get all TodoItems Async
         /// </summary>
         /// <returns>Collection of TodoItems</returns>
         /// <response code="200">Returns all TodoItems</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<TodoItem>>> Get()
+        public async Task<ActionResult<IEnumerable<TodoItemReadDto>>> GetAsync()
         {
-            return Ok(await _context.TodoItems.ToListAsync());
+            var todoItemsAsync = await _context.TodoItems.ToListAsync();
+
+            return Ok(_mapper.Map<IEnumerable<TodoItemReadDto>>(todoItemsAsync));
         }
 
         // GET: api/TodoItems/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
         /// <summary>
-        /// Get TodoItem by Id
+        /// Get TodoItem by Id Async
         /// </summary>
         /// <param name="id">Todo Id</param>
         /// <returns>TodoItem</returns>
@@ -53,22 +59,22 @@ namespace TodoApi.Controllers
         [HttpGet("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<TodoItem>> GetById(Guid id)
+        public async Task<ActionResult<TodoItemReadDto>> GetByIdAsync(Guid id)
         {
             var todoItem = await _context.TodoItems.FindAsync(id);
 
             if (todoItem == null) return NotFound();
 
-            return Ok(todoItem);
+            return Ok(_mapper.Map<TodoItemReadDto>(todoItem));
         }
 
         // PUT: api/TodoItems/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         /// <summary>
-        /// Update TodoItem
+        /// Update TodoItem Async
         /// </summary>
         /// <param name="id">TodoItem Id to update</param>
-        /// <param name="todoItem">TodoItem values - (Id is not authorized to change)</param>
+        /// <param name="todoItemUpdateDto">TodoItem values - (Id is not authorized to change)</param>
         /// <returns></returns>
         /// <response code="204">Update passed successfully</response>
         /// <response code="400">The provided `Id` and `todoItem.Id` are not equal</response>
@@ -79,9 +85,11 @@ namespace TodoApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Put(Guid id, TodoItem todoItem)
+        public async Task<IActionResult> PutAsync(Guid id, TodoItemUpdateDto todoItemUpdateDto)
         {
-            if (id != todoItem.Id) return BadRequest();
+            if (id != todoItemUpdateDto.Id) return BadRequest();
+
+            var todoItem = _mapper.Map<TodoItem>(todoItemUpdateDto);
 
             if (!ModelState.IsValid) return UnprocessableEntity(ModelState);
 
@@ -109,16 +117,15 @@ namespace TodoApi.Controllers
         // POST: api/TodoItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         /// <summary>
-        /// Create TodoItem
+        /// Create TodoItem Async
         /// </summary>
-        /// <param name="todoItem">TodoItem to create</param>
+        /// <param name="todoItemCreateDto">TodoItem to create</param>
         /// <returns>The new TodoItem</returns>
         /// <remarks>
         /// POST request:
         ///
         ///     POST api/TodoItems/
         ///     {
-        ///        "id": "auto-generated",
         ///        "name": "Item #1",
         ///        "isComplete": true
         ///     }
@@ -129,19 +136,24 @@ namespace TodoApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<ActionResult<TodoItem>> Post(TodoItem todoItem)
+        public async Task<ActionResult<TodoItemReadDto>> PostAsync(TodoItemCreateDto todoItemCreateDto)
         {
+            var todoItem = _mapper.Map<TodoItem>(todoItemCreateDto);
+
             if (!ModelState.IsValid) return UnprocessableEntity(ModelState);
 
             _context.TodoItems.Add(todoItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetById", new { id = todoItem.Id }, todoItem);
+            var todoItemReadDto = _mapper.Map<TodoItemReadDto>(todoItem);
+
+            // Triming Async suffix in Action Names, has been suppressed from Prom
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = todoItem.Id }, todoItemReadDto);
         }
 
         // DELETE: api/TodoItems/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx,
-         /// <summary>
-        /// Delete TodoItem (Hard delete)
+        /// <summary>
+        /// Delete TodoItem Async (Hard delete)
         /// </summary>
         /// <param name="id">TodoItem Id to delete</param>
         /// <returns></returns>
@@ -149,7 +161,7 @@ namespace TodoApi.Controllers
         /// <response code="204">Deletion passed successfully</response>
         /// <response code="404">TodoItem not found</response>
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> DeleteAsync(Guid id)
         {
             var todoItem = await _context.TodoItems.FindAsync(id);
             if (todoItem == null) return NotFound();

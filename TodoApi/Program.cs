@@ -1,4 +1,3 @@
-using System.Configuration;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -21,6 +20,7 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 builder.Services.AddControllers();
+
 // Use MSSQL
 builder.Services.AddDbContext<TodoContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ToDoItemConnectionString")));
@@ -45,6 +45,17 @@ builder.Services.AddSwaggerGen(options =>
     // Swagger XML Documentation File
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
+
+// Register AutoMapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// Microsoft automatically TRIMS Async Keyword from async methods
+// Configure Mvc to suppress Async suffix in Action Names 
+// Read more: https://stackoverflow.com/a/63834605 or https://docs.microsoft.com/en-us/dotnet/core/compatibility/aspnetcore#mvc-async-suffix-trimmed-from-controller-action-names
+builder.Services.AddMvc(options =>
+{
+    options.SuppressAsyncSuffixInActionNames = false;
 });
 
 var app = builder.Build();
