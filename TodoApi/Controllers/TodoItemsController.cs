@@ -41,7 +41,7 @@ namespace TodoApi.Controllers
         /// <summary>
         /// Get TodoItem by Id Async
         /// </summary>
-        /// <param name="id">Todo Id</param>
+        /// <param name="id">TodoItem Id</param>
         /// <returns>TodoItem</returns>
         /// <response code="200">Returns TodoItem</response>
         /// <response code="404">TodoItem not found</response>

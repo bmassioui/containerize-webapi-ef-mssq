@@ -13,7 +13,6 @@ namespace TodoApi.Profiles
         {
             // Source => Target
             CreateMap<TodoItem, TodoItemReadDto>();
-            // CreateMap<TodoItem, TodoItemUpdateDto>();
 
             // Target => Source
             CreateMap<TodoItemUpdateDto, TodoItem>();
