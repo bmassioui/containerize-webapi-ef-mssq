@@ -20,6 +20,7 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 builder.Services.AddControllers();
+
 // Use MSSQL
 builder.Services.AddDbContext<TodoContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ToDoItemConnectionString")));
@@ -48,6 +49,14 @@ builder.Services.AddSwaggerGen(options =>
 
 // Register AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// Microsoft automatically TRIMS Async Keyword from async methods
+// Configure Mvc to suppress Async suffix in Action Names 
+// Read more: https://stackoverflow.com/a/63834605 or https://docs.microsoft.com/en-us/dotnet/core/compatibility/aspnetcore#mvc-async-suffix-trimmed-from-controller-action-names
+builder.Services.AddMvc(options =>
+{
+    options.SuppressAsyncSuffixInActionNames = false;
+});
 
 var app = builder.Build();
 

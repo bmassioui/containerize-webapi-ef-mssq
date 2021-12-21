@@ -136,7 +136,7 @@ namespace TodoApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<ActionResult<TodoItemCreateDto>> PostAsync(TodoItemCreateDto todoItemCreateDto)
+        public async Task<ActionResult<TodoItemReadDto>> PostAsync(TodoItemCreateDto todoItemCreateDto)
         {
             var todoItem = _mapper.Map<TodoItem>(todoItemCreateDto);
 
@@ -145,7 +145,10 @@ namespace TodoApi.Controllers
             _context.TodoItems.Add(todoItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetByIdAsync", new { id = todoItem.Id }, todoItem); // Still not working
+            var todoItemReadDto = _mapper.Map<TodoItemReadDto>(todoItem);
+
+            // Triming Async suffix in Action Names, has been suppressed from Prom
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = todoItem.Id }, todoItemReadDto);
         }
 
         // DELETE: api/TodoItems/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx,
