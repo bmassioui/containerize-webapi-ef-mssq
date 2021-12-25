@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 namespace TodoApi.Models
 {
     /// <summary>
-    /// Todo DbContext
+    /// TodoItem DbContext
     /// </summary>
-    public class TodoContext : DbContext
+    public class TodoItemDbContext : DbContext
     {
-        public TodoContext(DbContextOptions<TodoContext> options)
+        public TodoItemDbContext(DbContextOptions<TodoItemDbContext> options)
             : base(options)
         {
         }

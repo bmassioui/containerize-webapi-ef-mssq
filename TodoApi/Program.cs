@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 
 // Use MSSQL
-builder.Services.AddDbContext<TodoContext>(options =>
+builder.Services.AddDbContext<TodoItemDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ToDoItemConnectionString")));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
