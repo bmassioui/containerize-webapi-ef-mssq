@@ -1,0 +1,24 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.4'
+
+services:
+  todoapi:
+    image: todoapi
+    build:
+      context: .
+      dockerfile: TodoApi/Dockerfile
+    ports:
+      - 5000:5000
+    depends_on:
+    - db
+
+  db:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=1Secure*Password1
+    ports:
+      - 1400:1433
+    volumes:
+      - ./MssqlVolume/:/var/opt/mssql/data/
