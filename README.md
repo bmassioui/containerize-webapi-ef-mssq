@@ -1,6 +1,13 @@
 # About the repository 📑
 Containerize DotNet 6 Web API (TodoApi), EF Core et Microsoft SQL Server using Dockerfile and Docker-Compose
 
+# Techs
+- Dot NET 6
+- Web API
+- EF Core
+- Sql Server
+- Auto-mapper
+- Docker
 
 # References 📚
 - [Todo Api using dotnet 6 WebApi](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-6.0&tabs=visual-studio-code)
